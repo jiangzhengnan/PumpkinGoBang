@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
+ * 利用反射获得蓝牙方法
  * Created by nangua on 2016/5/31.
  */
 public class ClsUtils {

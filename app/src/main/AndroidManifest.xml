@@ -15,8 +15,6 @@
         <activity android:name=".aty.MainActivity">
 
         </activity>
-        <activity android:name=".aty.BluetoothActivity">
-        </activity>
         <activity android:name=".aty.FindOthersAty">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>

@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -36,31 +35,32 @@ public class FindOthersAty extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bluetooth_layout);
-
         //设置手机蓝牙可见性
-        //创建一个Intent对象,并且将其action的值设置为BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE也就是蓝牙设备设置为可见状态
-        Intent kejianxingIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-        //将一个键值对存放到Intent对象当中,主要用于指定可见状态的持续时间,大于300秒,就认为是300秒
-        kejianxingIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 500);
-        //执行请求
-        startActivity(kejianxingIntent);
+        openBlueTooth();
+        //初始化视图
+        initView();
 
+    }
+
+    private void initView() {
         //得到扫描周围蓝牙设备按钮
         btn_saomiao = (Button) findViewById(R.id.saomiao_btn);
+        //扫描周围设备的ListView
         saomiao_lv = (ListView) findViewById(R.id.saomiao_lv);
+        //设备信息ArrayList
         devices = new ArrayList<>();
+        //显示蓝牙设备信息的adapter
         deviceshowAdapter = new DeviceshowAdapter(this,devices);
         saomiao_lv.setAdapter(deviceshowAdapter);
-
         //绑定扫描周围蓝牙设备按钮监听器
-
         btn_saomiao.setOnClickListener(new SaoMiaoButtonListener());
-
         //得到本机蓝牙设备
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         String benjiname = bluetoothAdapter.getName();//本机名称
         String benjidizhi = bluetoothAdapter.getAddress();//本机地址
-        bluetoothAdapter.getState();//获得本地蓝牙设备状态，如果是打开状态可以判断进入下一个界面
+
+        //获得本地蓝牙设备状态，这里如果是打开状态可以判断进入下一个界面
+        bluetoothAdapter.getState();
         /**
          *  getState()获取本地蓝牙适配器当前状态（感觉可能调试的时候更需要）
              isDiscovering()判断当前是否正在查找设备，是返回true
@@ -72,7 +72,7 @@ public class FindOthersAty extends Activity {
         IntentFilter intentFilter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         //创建一个BluetoothReceiver对象
         bluetoothReceiver = new BluetoothReceiver();
-        //设置广播的优先级
+        //设置广播的优先级为最大
         intentFilter.setPriority(Integer.MAX_VALUE);
         //注册广播接收器 注册完后每次发送广播后，BluetoothReceiver就可以接收到这个广播了
         registerReceiver(bluetoothReceiver, intentFilter);
@@ -81,13 +81,25 @@ public class FindOthersAty extends Activity {
     //扫描周围的蓝牙设备按钮监听器
 
     private class SaoMiaoButtonListener implements View.OnClickListener {
+
         @Override
         public void onClick(View v) {
             Toast.makeText(FindOthersAty.this,"开始扫描",Toast.LENGTH_SHORT).show();
-            //扫描周围的可见的蓝牙设备一次要消耗12秒，废电池电量
-            //扫描到了后结果我们怎么接收呢,扫描周围的蓝牙设备每扫描到一个蓝牙设备就会发送一个广播,我们就需要BroadcastReceiver来接收这个广播,这个函数是异步的调用,并不是扫描12之后才返回结果的,只要一调用这个函数马上返回,不会等12秒
+            //开始扫描周围的可见的蓝牙设备
             bluetoothAdapter.startDiscovery();
         }
+    }
+
+    /**
+     * 打开蓝牙设备，设置可见性。
+     */
+    private void openBlueTooth() {
+        //创建一个Intent对象,并且将其action的值设置为BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE也就是蓝牙设备设置为可见状态
+        Intent kejianxingIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        //将一个键值对存放到Intent对象当中,主要用于指定可见状态的持续时间,大于300秒,就认为是300秒
+        kejianxingIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 500);
+        //执行请求
+        startActivity(kejianxingIntent);
     }
 
     //接收广播
@@ -107,19 +119,22 @@ public class FindOthersAty extends Activity {
 
                 }
 
+                //设备数组获得新的设备信息并更新adapter
                 devices.add(new Device(bluetoothDevice.getName(),bluetoothDevice.getAddress()));
                 deviceshowAdapter.notifyDataSetChanged();
+
 
                 //根据名称，UUID创建并返回BluetoothServerSocket，这是创建BluetoothSocket服务器端的第一步
                 try {
                     BluetoothServerSocket serverSocket = bluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(bluetoothAdapter.getName(), Config.UUID);
-                    Log.d("whalea","2333");
-//
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
-                //发送完成之后的操作
+                //扫描完成之后的操作
                 Toast.makeText(FindOthersAty.this,"扫描完成",Toast.LENGTH_SHORT).show();
             }
         }
