@@ -12,12 +12,12 @@
         android:label="南瓜五子棋"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".aty.MainActivity">
 
         </activity>
-        <activity android:name=".BluetoothActivity">
+        <activity android:name=".aty.BluetoothActivity">
         </activity>
-        <activity android:name=".FindOthersAty">
+        <activity android:name=".aty.FindOthersAty">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
