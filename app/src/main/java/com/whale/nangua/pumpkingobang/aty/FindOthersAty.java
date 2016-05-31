@@ -114,10 +114,9 @@ public class FindOthersAty extends Activity {
                 try {
                     BluetoothServerSocket serverSocket = bluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(bluetoothAdapter.getName(), Config.UUID);
                     Log.d("whalea","2333");
-//
                 } catch (IOException e) {
                     e.printStackTrace();
-                }
+                }//aaaaaaaaaaa
             } else if (BluetoothAdapter.ACTION_DISCOVERY_FINISHED.equals(action)) {
                 //发送完成之后的操作
                 Toast.makeText(FindOthersAty.this,"扫描完成",Toast.LENGTH_SHORT).show();
