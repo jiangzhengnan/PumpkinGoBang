@@ -1,4 +1,4 @@
-package com.whale.nangua.pumpkingobang;
+package com.whale.nangua.pumpkingobang.aty;
 
 import android.os.Build;
 import android.os.Bundle;
@@ -7,6 +7,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.whale.nangua.pumpkingobang.R;
 import com.whale.nangua.pumpkingobang.view.GobangView;
 
 import java.text.SimpleDateFormat;
