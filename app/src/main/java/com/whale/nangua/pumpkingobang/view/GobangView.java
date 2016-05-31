@@ -17,6 +17,9 @@ import android.widget.TextView;
 
 import com.whale.nangua.pumpkingobang.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class GobangView extends View {
     protected static int GRID_SIZE = 14;    //设置为国际标准
     protected static int GRID_WIDTH = 42; // 棋盘格的宽度
@@ -33,11 +36,6 @@ public class GobangView extends View {
     private final int BLACK = 1;
     private final int WHITE = 2;
 
-    int mGameState = GAMESTATE_RUN; //游戏阶段：0=尚未游戏，1=正在进行游戏，2=游戏结束
-    static final int GAMESTATE_PRE = 0;
-    static final int GAMESTATE_RUN = 1;
-    static final int GAMESTATE_PAUSE = 2;
-    static final int GAMESTATE_END = 3;
 
     //private TextView mStatusTextView; //  根据游戏状态设置显示的文字
     private TextView mStatusTextView; //  根据游戏状态设置显示的文字
@@ -46,9 +44,9 @@ public class GobangView extends View {
     private final Paint mPaint = new Paint();
 
     CharSequence mText;
-    CharSequence STRING_WIN = "白棋赢啦! /n Press Fire Key to start new game.";
-    CharSequence STRING_LOSE = "黑棋赢啦! /n Press Fire Key to start new game.";
-    CharSequence STRING_EQUAL = "和棋！ /n Press Fire Key to start new Game.";
+    CharSequence STRING_WIN = "白棋赢啦!  ";
+    CharSequence STRING_LOSE = "黑棋赢啦!  ";
+    CharSequence STRING_EQUAL = "和棋！  ";
 
     public GobangView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -64,7 +62,6 @@ public class GobangView extends View {
     // 初始化黑白棋的Bitmap
     public void init() {
         myButtonListener = new MyButtonListener();
-        mGameState = 1; //设置游戏为开始状态
         wbflag = BLACK; //初始为先下黑棋
         mWinFlag = 0; //清空输赢标志。
         mGridArray = new int[GRID_SIZE - 1][GRID_SIZE - 1];
@@ -99,65 +96,54 @@ public class GobangView extends View {
         mStartY = h / 2 - GRID_SIZE * GRID_WIDTH / 2;
     }
 
+    /**
+     * 点下出现棋子
+     * @param event
+     * @return
+     */
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        switch (mGameState) {
-            case GAMESTATE_PRE:
-                break;
-            case GAMESTATE_RUN: {
-                int x;
-                int y;
-                float x0 = GRID_WIDTH - (event.getX() - mStartX) % GRID_WIDTH;
-                float y0 = GRID_WIDTH - (event.getY() - mStartY) % GRID_WIDTH;
-                if (x0 < GRID_WIDTH / 2) {
-                    x = (int) ((event.getX() - mStartX) / GRID_WIDTH);
-                } else {
-                    x = (int) ((event.getX() - mStartX) / GRID_WIDTH) - 1;
-                }
-                if (y0 < GRID_WIDTH / 2) {
-                    y = (int) ((event.getY() - mStartY) / GRID_WIDTH);
-                } else {
-                    y = (int) ((event.getY() - mStartY) / GRID_WIDTH) - 1;
-                }
-                if ((x >= 0 && x < GRID_SIZE - 1)
-                        && (y >= 0 && y < GRID_SIZE - 1)) {
-                    if (mGridArray[x][y] == 0) {
-                        if (wbflag == BLACK) {
-                            putChess(x, y, BLACK);
-                            //this.mGridArray[x][y] = 1;
-                            if (checkWin(BLACK)) { //如果是黑棋赢了
-                                mText = STRING_LOSE;
-                                mGameState = GAMESTATE_END;
-                                showTextView(mText);
-                            } else if (checkFull()) {//如果棋盘满了
-                                mText = STRING_EQUAL;
-                                mGameState = GAMESTATE_END;
-                                showTextView(mText);
-                            }
-                            wbflag = WHITE;
-                        } else if (wbflag == WHITE) {
-                            putChess(x, y, WHITE);
-                            //this.mGridArray[x][y] = 2;
-                            if (checkWin(WHITE)) {
-                                mText = STRING_WIN;
-                                mGameState = GAMESTATE_END;
-                                showTextView(mText);
-                            } else if (checkFull()) {//如果棋盘满了
-                                mText = STRING_EQUAL;
-                                mGameState = GAMESTATE_END;
-                                showTextView(mText);
-                            }
-                            wbflag = BLACK;
-                        }
+        int x;
+        int y;
+        float x0 = GRID_WIDTH - (event.getX() - mStartX) % GRID_WIDTH;
+        float y0 = GRID_WIDTH - (event.getY() - mStartY) % GRID_WIDTH;
+        if (x0 < GRID_WIDTH / 2) {
+            x = (int) ((event.getX() - mStartX) / GRID_WIDTH);
+        } else {
+            x = (int) ((event.getX() - mStartX) / GRID_WIDTH) - 1;
+        }
+        if (y0 < GRID_WIDTH / 2) {
+            y = (int) ((event.getY() - mStartY) / GRID_WIDTH);
+        } else {
+            y = (int) ((event.getY() - mStartY) / GRID_WIDTH) - 1;
+        }
+        if ((x >= 0 && x < GRID_SIZE - 1)
+                && (y >= 0 && y < GRID_SIZE - 1)) {
+            if (mGridArray[x][y] == 0) {
+                if (wbflag == BLACK) {
+                    putChess(x, y, BLACK);
+                    //this.mGridArray[x][y] = 1;
+                    if (checkWin(BLACK)) { //如果是黑棋赢了
+                        mText = STRING_LOSE;
+                        showTextView(mText);
+                    } else if (checkFull()) {//如果棋盘满了
+                        mText = STRING_EQUAL;
+                        showTextView(mText);
                     }
+                    wbflag = WHITE;
+                } else if (wbflag == WHITE) {
+                    putChess(x, y, WHITE);
+                    //this.mGridArray[x][y] = 2;
+                    if (checkWin(WHITE)) {
+                        mText = STRING_WIN;
+                        showTextView(mText);
+                    } else if (checkFull()) {//如果棋盘满了
+                        mText = STRING_EQUAL;
+                        showTextView(mText);
+                    }
+                    wbflag = BLACK;
                 }
             }
-
-            break;
-            case GAMESTATE_PAUSE:
-                break;
-            case GAMESTATE_END:
-                break;
         }
 
         this.invalidate();
@@ -253,6 +239,11 @@ public class GobangView extends View {
             return false;
     }
 
+    /**
+     * 检查棋盘是否满了
+     *
+     * @return
+     */
     public boolean checkFull() {
         int mNotEmpty = 0;
         for (int i = 0; i < GRID_SIZE - 1; i++)
@@ -268,7 +259,6 @@ public class GobangView extends View {
         this.mStatusTextView.setText(mT);
         mStatusTextView.setVisibility(View.VISIBLE);
     }
-
 
     private int[] showtime;
 
@@ -292,7 +282,8 @@ public class GobangView extends View {
                     for (int i = 0; i < showtime.length; i++) {
                         showtime[i] = 0;
                     }
-                    mStatusTextView.invalidate();
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+                    mStatusTextView.setText("当前时间：" + simpleDateFormat.format(new Date()));
                     break;
             }
         }

@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.whale.nangua.pumpkingobang"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest
+    package="com.whale.nangua.pumpkingobang"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
+    　　　　
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
     <application
         android:allowBackup="true"
         android:icon="@drawable/icon"
-        android:label="@string/app_name"
+        android:label="南瓜五子棋"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
+
+        </activity>
+        <activity android:name=".BluetoothActivity">
+        </activity>
+        <activity android:name=".FindOthersAty">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
