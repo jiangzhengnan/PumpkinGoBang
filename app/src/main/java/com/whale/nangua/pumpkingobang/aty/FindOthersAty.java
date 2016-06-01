@@ -39,7 +39,6 @@ public class FindOthersAty extends Activity {
         openBlueTooth();
         //初始化视图
         initView();
-
     }
 
     private void initView() {
