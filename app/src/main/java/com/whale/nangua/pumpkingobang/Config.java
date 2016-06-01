@@ -7,5 +7,5 @@ import java.util.UUID;
  */
 public class Config {
     //本机唯一UUID
-    public static final UUID UUID = java.util.UUID.fromString("d22f30b8-2716-41d2-84f2-4cd56bb75ecc");
+    public static final UUID UUID = java.util.UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
 }

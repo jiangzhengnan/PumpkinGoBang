@@ -17,6 +17,14 @@ import java.util.zip.Inflater;
  * Created by nangua on 2016/5/31.
  */
 public class DeviceshowAdapter extends BaseAdapter {
+    public ArrayList<Device> getDevices() {
+        return devices;
+    }
+
+    public void setDevices(ArrayList<Device> devices) {
+        this.devices = devices;
+    }
+
     private ArrayList<Device> devices;
     private Context context;
     private TextView devicename;
