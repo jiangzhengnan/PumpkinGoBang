@@ -11,11 +11,13 @@
         android:icon="@drawable/icon"
         android:label="南瓜五子棋"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen">
         <activity android:name=".aty.GameActivity">
 
         </activity>
         <activity android:name=".aty.FindOthersAty">
+        </activity>
+        <activity android:name=".aty.InitAty">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
