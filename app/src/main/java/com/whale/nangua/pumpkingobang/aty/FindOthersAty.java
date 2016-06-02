@@ -218,7 +218,6 @@ public class FindOthersAty extends Activity {
                     if (device.getBondState() == BluetoothDevice.BOND_BONDED){
                         //获得客户端Socket
                         kehuduanSocket = device.createRfcommSocketToServiceRecord(Config.UUID);
-
                         final AlertDialog aDialog = new AlertDialog.Builder(FindOthersAty.this).
                                 setTitle("发起对战").
                                 setMessage("确认挑战玩家：" + deviceNameAndDresss.get(position).getDeviceName() + "吗？")
