@@ -1,21 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              android:layout_width="fill_parent"
-
+             android:background="@drawable/mainbackground"
              android:layout_height="fill_parent">
-    <ImageView
-        android:id="@+id/renjibeijingdongtu"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="fitXY"
-        android:src="@drawable/renjibackground_animation"/>
+
     <LinearLayout
         android:layout_gravity="top"
         android:layout_width="match_parent"
         android:layout_marginLeft="80dp"
         android:layout_marginRight="80dp"
         android:layout_marginTop="50dp"
-        android:background="@drawable/renji_button"
+        android:background="@drawable/button_background"
         android:gravity="center"
         android:orientation="vertical"
         android:padding="5dp"
@@ -23,7 +18,7 @@
         android:paddingRight="5dp"
         android:layout_height="wrap_content">
         <TextView
-            android:id="@+id/text"
+            android:id="@+id/renren_text"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:textColor="#ffd000"
@@ -36,7 +31,7 @@
             android:focusable="true"
             />
         <TextView
-            android:id="@+id/showtime"
+            android:id="@+id/renren_showtime"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:textColor="#00c4ff"
@@ -46,19 +41,19 @@
             />
     </LinearLayout>
 
-    <com.whale.nangua.pumpkingobang.view.RenjiGobangView
-        android:id="@+id/gobangview"
+    <com.whale.nangua.pumpkingobang.view.RenRenGoBang
+        android:id="@+id/renren_gobangview"
         tileSize="24"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-         />
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:orientation="vertical"
         android:layout_gravity="bottom"
-         >
+        >
         <LinearLayout
             android:layout_width="match_parent"
             android:orientation="horizontal"
@@ -67,8 +62,8 @@
             android:paddingRight="40dp"
             android:layout_weight="1">
             <Button
-                android:id="@+id/btn1"
-                android:background="@drawable/renji_button"
+                android:id="@+id/renren_btn1"
+                android:background="@drawable/button_background"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_marginRight="60dp"
@@ -77,8 +72,8 @@
                 android:textSize="20sp"
                 android:text="悔   棋"/>
             <Button
-                android:id="@+id/btn2"
-                android:background="@drawable/renji_button"
+                android:id="@+id/renren_btn2"
+                android:background="@drawable/button_background"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"

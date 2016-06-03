@@ -1,8 +1,5 @@
 package com.whale.nangua.pumpkingobang.view;
 
-/**
- * Created by nangua on 2016/6/3.
- */
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -10,10 +7,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -21,14 +16,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.whale.nangua.pumpkingobang.R;
-import com.whale.nangua.pumpkingobang.aty.BlueToothGameAty;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Stack;
 
-public class BlueToothGoBangView extends View {
+public class RenRenGoBang extends View {
     protected static int GRID_SIZE = 14;    //设置为国际标准
     protected static int GRID_WIDTH = 42; // 棋盘格的宽度
     protected static int CHESS_DIAMETER = 37; // 棋的直径
@@ -57,7 +50,7 @@ public class BlueToothGoBangView extends View {
     CharSequence STRING_LOSE = "黑棋赢啦!  ";
     CharSequence STRING_EQUAL = "和棋！  ";
 
-    public BlueToothGoBangView(Context context, AttributeSet attrs) {
+    public RenRenGoBang(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.setFocusable(true);
         this.setFocusableInTouchMode(true);
@@ -67,12 +60,6 @@ public class BlueToothGoBangView extends View {
 
     //按钮监听器
     MyButtonListener myButtonListener;
-
-    public void setActionCallbak(BlueToothGameAty blueToothGameAty) {
-        this.blueToothGameAty = blueToothGameAty;
-    }
-
-    private  BlueToothGameAty blueToothGameAty;
 
     // 初始化黑白棋的Bitmap
     public void init() {
@@ -92,12 +79,13 @@ public class BlueToothGoBangView extends View {
     //设置显示的textView
     public void setTextView(TextView tv) {
         mStatusTextView = tv;
+        //mStatusTextView.setVisibility(View.INVISIBLE);
     }
 
     //悔棋按钮
-    Button huiqi;
+    private Button huiqi;
     //刷新那妞
-    Button refresh;
+    private Button refresh;
 
     //设置两个按钮
     public void setButtons(Button huiqi, Button refresh) {
@@ -143,7 +131,6 @@ public class BlueToothGoBangView extends View {
                     if (checkWin(BLACK)) { //如果是黑棋赢了
                         mText = STRING_LOSE;
                         showTextView(mText);
-                        blueToothGameAty.onPutChess("BLACK");
                     } else if (checkFull()) {//如果棋盘满了
                         mText = STRING_EQUAL;
                         showTextView(mText);
@@ -155,7 +142,6 @@ public class BlueToothGoBangView extends View {
                     if (checkWin(WHITE)) {
                         mText = STRING_WIN;
                         showTextView(mText);
-                        blueToothGameAty.onPutChess("WHITE");
                     } else if (checkFull()) {//如果棋盘满了
                         mText = STRING_EQUAL;
                         showTextView(mText);
@@ -175,13 +161,13 @@ public class BlueToothGoBangView extends View {
         //canvas.drawColor(Color.YELLOW);
         //先画实木背景
         Paint paintBackground = new Paint();
-        Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.lanya_backgournd);
+        Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.chess_background);
         canvas.drawBitmap(bitmap, null, new Rect(mStartX, mStartY, mStartX + GRID_WIDTH * GRID_SIZE, mStartY + GRID_WIDTH * GRID_SIZE), paintBackground);
         // 画棋盘
         Paint paintRect = new Paint();
         paintRect.setColor(Color.BLACK);
         paintRect.setStrokeWidth(2);
-        paintRect.setStyle(Style.STROKE);
+        paintRect.setStyle(Paint.Style.STROKE);
         for (int i = 0; i < GRID_SIZE; i++) {
             for (int j = 0; j < GRID_SIZE; j++) {
                 int mLeft = i * GRID_WIDTH + mStartX;
@@ -221,49 +207,11 @@ public class BlueToothGoBangView extends View {
         }
     }
 
-    /**
-     * 下棋，黑1 白2
-     * @param x
-     * @param y
-     * @param blackwhite
-     */
     public void putChess(int x, int y, int blackwhite) {
         mGridArray[x][y] = blackwhite;
         String temp = x + ":" + y;
         storageArray.push(temp);
-        //通过回调方法通知Activity下棋动作
-        blueToothGameAty.onPutChess(temp + ":" + blackwhite);
-        invalidate();
-    }
 
-    //收到对方传来的棋子
-    public void xiaqi(String command) {
-        if (command.equals("WHITE")) {
-            mStatusTextView.setText("白棋赢辣");
-        } else if (command.equals("BLACK")) {
-            mStatusTextView.setText("黑棋赢辣");
-        } else {
-            Log.d("whalea", "收到的指令:" + command);
-            String[] temps = command.split(":");
-            int a = Integer.parseInt(temps[0]);
-            int b = Integer.parseInt(temps[1]);
-            int c = Integer.parseInt(temps[2]);
-            mGridArray[a][b] = c;
-            //  wbflag = c;//该下白棋了=2，该下黑棋了=1. 这里先下黑棋（黑棋以后设置为机器自动下的棋子）
-            if (wbflag == 1) {
-                wbflag = 2;
-            } else {
-                wbflag = 1;
-            }
-            String temp = a + ":" + b;
-            storageArray.push(temp);
-        }
-        invalidate();
-    }
-
-
-    public interface BlueToothActionListner {
-        void  onPutChess(String temp);
     }
 
     public boolean checkWin(int wbflag) {
@@ -333,7 +281,7 @@ public class BlueToothGoBangView extends View {
                 //如果是悔棋
                 case R.id.btn1:
                     if (storageArray.size()==0) {
-                        Toast.makeText(getContext(),"开局并不能悔棋",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), "开局并不能悔棋", Toast.LENGTH_SHORT).show();
                     }else {
                         if (storageArray.size()==1) {
                             storageArray.pop();
@@ -360,7 +308,7 @@ public class BlueToothGoBangView extends View {
                         showtime[i] = 0;
                     }
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
-                    mStatusTextView.setText("蓝牙对战模式 当前时间：" + simpleDateFormat.format(new Date()));
+                    mStatusTextView.setText("人人模式  当前时间：" + simpleDateFormat.format(new Date()));
                     break;
             }
         }

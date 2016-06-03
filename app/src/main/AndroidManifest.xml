@@ -25,6 +25,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".aty.BlueToothGameAty"></activity>
+        <activity android:name=".aty.RenRenGameAty"></activity>
     </application>
 
 </manifest>

@@ -16,7 +16,7 @@ public class InitAty extends Activity {
     private Button init_lanyabtn;
     private Button init_socketbtn;
     private Button init_rankbtn;
-    private Button init_helpbtn;
+    private Button init_renrenbtn;
     private InitButtonListener initButtonListener;
 
     @Override
@@ -31,13 +31,13 @@ public class InitAty extends Activity {
         init_lanyabtn = (Button) findViewById(R.id.init_lanyabtn);
         init_socketbtn = (Button) findViewById(R.id.init_socketbtn);
         init_rankbtn = (Button) findViewById(R.id.init_rankbtn);
-        init_helpbtn = (Button) findViewById(R.id.init_helpbtn);
+        init_renrenbtn = (Button) findViewById(R.id.init_renrenbtn);
         initButtonListener = new InitButtonListener();
         init_renjibtn.setOnClickListener(initButtonListener);
         init_lanyabtn.setOnClickListener(initButtonListener);
         init_socketbtn.setOnClickListener(initButtonListener);
         init_rankbtn.setOnClickListener(initButtonListener);
-        init_helpbtn.setOnClickListener(initButtonListener);
+        init_renrenbtn.setOnClickListener(initButtonListener);
     }
 
 
@@ -52,6 +52,13 @@ public class InitAty extends Activity {
                     InitAty.this.overridePendingTransition(R.anim.initactivity_open, 0);
                     startActivity(i);
                 break;
+                //人人对战
+                case R.id.init_renrenbtn:
+                    i = new Intent(InitAty.this,RenRenGameAty.class);
+                    //设置从右边出现
+                    InitAty.this.overridePendingTransition(R.anim.initactivity_open, 0);
+                    startActivity(i);
+                    break;
                 case R.id.init_lanyabtn:
                     i = new Intent(InitAty.this,FindOthersAty.class);
                     //设置从右边出现
@@ -64,10 +71,6 @@ public class InitAty extends Activity {
                 case R.id.init_rankbtn:
 
                 break;
-                case R.id.init_helpbtn:
-
-                break;
-
 
             }
         }

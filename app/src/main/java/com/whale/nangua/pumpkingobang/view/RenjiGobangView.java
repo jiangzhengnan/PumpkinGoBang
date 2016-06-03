@@ -164,7 +164,7 @@ public class RenjiGobangView extends View {
         //canvas.drawColor(Color.YELLOW);
         //先画实木背景
         Paint paintBackground = new Paint();
-        Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.chess_background);
+        Bitmap bitmap = BitmapFactory.decodeResource(getContext().getResources(), R.drawable.renji_backgournd);
         canvas.drawBitmap(bitmap, null, new Rect(mStartX, mStartY, mStartX + GRID_WIDTH * GRID_SIZE, mStartY + GRID_WIDTH * GRID_SIZE), paintBackground);
         // 画棋盘
         Paint paintRect = new Paint();
@@ -311,7 +311,7 @@ public class RenjiGobangView extends View {
                         showtime[i] = 0;
                     }
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
-                    mStatusTextView.setText("当前时间：" + simpleDateFormat.format(new Date()));
+                    mStatusTextView.setText("人机模式 当前时间：" + simpleDateFormat.format(new Date()));
                     break;
             }
         }
