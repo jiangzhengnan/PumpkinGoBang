@@ -1,24 +1,21 @@
 package com.whale.nangua.pumpkingobang.aty;
 
 import android.app.Activity;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.whale.nangua.pumpkingobang.R;
-import com.whale.nangua.pumpkingobang.view.GobangView;
+import com.whale.nangua.pumpkingobang.view.RenjiGobangView;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class GameActivity extends Activity {
+public class RenjiGameAty extends Activity {
 
-    GobangView gbv;
+    RenjiGobangView gbv;
     TextView textView;
     Button huiqi;
     Button shuaxin;
@@ -27,13 +24,13 @@ public class GameActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.gamemain_layout);
+        setContentView(R.layout.renjigame_layout);
         initView();
     }
 
     private void initView() {
         showtime = (TextView) findViewById(R.id.showtime);
-        gbv = (GobangView) this.findViewById(R.id.gobangview);
+        gbv = (RenjiGobangView) this.findViewById(R.id.gobangview);
         textView = (TextView) findViewById(R.id.text);
         huiqi = (Button) findViewById(R.id.btn1);
         shuaxin = (Button) findViewById(R.id.btn2);

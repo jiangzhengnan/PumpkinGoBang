@@ -47,7 +47,7 @@ public class InitAty extends Activity {
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.init_renjibtn:
-                    i = new Intent(InitAty.this,GameActivity.class);
+                    i = new Intent(InitAty.this,RenjiGameAty.class);
                     //设置从右边出现
                     InitAty.this.overridePendingTransition(R.anim.initactivity_open, 0);
                     startActivity(i);

@@ -1,5 +1,8 @@
 package com.whale.nangua.pumpkingobang.view;
 
+/**
+ * Created by nangua on 2016/6/3.
+ */
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -18,13 +21,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.whale.nangua.pumpkingobang.R;
+import com.whale.nangua.pumpkingobang.aty.BlueToothGameAty;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Stack;
 
-public class GobangView extends View {
+public class BlueToothGoBangView extends View {
     protected static int GRID_SIZE = 14;    //设置为国际标准
     protected static int GRID_WIDTH = 42; // 棋盘格的宽度
     protected static int CHESS_DIAMETER = 37; // 棋的直径
@@ -53,7 +57,7 @@ public class GobangView extends View {
     CharSequence STRING_LOSE = "黑棋赢啦!  ";
     CharSequence STRING_EQUAL = "和棋！  ";
 
-    public GobangView(Context context, AttributeSet attrs) {
+    public BlueToothGoBangView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.setFocusable(true);
         this.setFocusableInTouchMode(true);
@@ -63,6 +67,12 @@ public class GobangView extends View {
 
     //按钮监听器
     MyButtonListener myButtonListener;
+
+    public void setActionCallbak(BlueToothGameAty blueToothGameAty) {
+        this.blueToothGameAty = blueToothGameAty;
+    }
+
+    private  BlueToothGameAty blueToothGameAty;
 
     // 初始化黑白棋的Bitmap
     public void init() {
@@ -210,11 +220,43 @@ public class GobangView extends View {
         }
     }
 
+    /**
+     * 下棋，黑1 白2
+     * @param x
+     * @param y
+     * @param blackwhite
+     */
     public void putChess(int x, int y, int blackwhite) {
         mGridArray[x][y] = blackwhite;
         String temp = x + ":" + y;
         storageArray.push(temp);
+        //通过回调方法通知Activity下棋动作
+        blueToothGameAty.onPutChess(temp + ":" + blackwhite);
+        invalidate();
+    }
 
+    //收到对方传来的棋子
+    public void xiaqi(String command) {
+        Log.d("whalea","收到的指令:" + command);
+        String[] temps = command.split(":");
+        int a = Integer.parseInt(temps[0]);
+        int b = Integer.parseInt(temps[1]);
+        int c = Integer.parseInt(temps[2]);
+        mGridArray[a][b] = c;
+        //  wbflag = c;//该下白棋了=2，该下黑棋了=1. 这里先下黑棋（黑棋以后设置为机器自动下的棋子）
+        if (wbflag == 1) {
+            wbflag =2;
+        }else {
+            wbflag = 1;
+        }
+        String temp = a + ":" + b;
+        storageArray.push(temp);
+        invalidate();
+    }
+
+
+    public interface BlueToothActionListner {
+        void  onPutChess(String temp);
     }
 
     public boolean checkWin(int wbflag) {

@@ -2,16 +2,31 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="50dp">
+              android:layout_height="100dp">
 
     <TextView
         android:id="@+id/device_name"
         android:layout_width="0dp"
         android:layout_weight="1"
+        android:gravity="center"
         android:layout_height="match_parent"/>
     <TextView
         android:id="@+id/device_address"
         android:layout_width="0dp"
         android:layout_weight="3"
+        android:gravity="center"
+        android:layout_height="match_parent"/>
+    <ImageView
+        android:src="@drawable/ic_clear_24dp"
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="match_parent"/>
+    <TextView
+        android:id="@+id/device_ifchoise"
+        android:text="未配对"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="match_parent"/>
 </LinearLayout>

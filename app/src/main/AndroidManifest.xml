@@ -12,7 +12,7 @@
         android:label="南瓜五子棋"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen">
-        <activity android:name=".aty.GameActivity">
+        <activity android:name=".aty.RenjiGameAty">
 
         </activity>
         <activity android:name=".aty.FindOthersAty">
@@ -24,6 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".aty.BlueToothGameAty"></activity>
     </application>
 
 </manifest>
