@@ -14,6 +14,8 @@
         android:gravity="center"
         android:orientation="vertical"
         android:padding="5dp"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         android:layout_height="wrap_content">
         <TextView
             android:id="@+id/text"

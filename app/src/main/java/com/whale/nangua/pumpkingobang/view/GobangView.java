@@ -10,15 +10,19 @@ import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.whale.nangua.pumpkingobang.R;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Stack;
 
 public class GobangView extends View {
     protected static int GRID_SIZE = 14;    //设置为国际标准
@@ -28,6 +32,7 @@ public class GobangView extends View {
     protected static int mStartY;// 棋盘定位的左上角Y
 
     private static int[][] mGridArray; // 网格
+    private Stack<String> storageArray;
 
 
     int wbflag = 1; //该下白棋了=2，该下黑棋了=1. 这里先下黑棋（黑棋以后设置为机器自动下的棋子）
@@ -61,6 +66,7 @@ public class GobangView extends View {
 
     // 初始化黑白棋的Bitmap
     public void init() {
+        storageArray = new Stack<>();
         myButtonListener = new MyButtonListener();
         wbflag = BLACK; //初始为先下黑棋
         mWinFlag = 0; //清空输赢标志。
@@ -79,7 +85,9 @@ public class GobangView extends View {
         //mStatusTextView.setVisibility(View.INVISIBLE);
     }
 
+    //悔棋按钮
     Button huiqi;
+    //刷新那妞
     Button refresh;
 
     //设置两个按钮
@@ -204,6 +212,9 @@ public class GobangView extends View {
 
     public void putChess(int x, int y, int blackwhite) {
         mGridArray[x][y] = blackwhite;
+        String temp = x + ":" + y;
+        storageArray.push(temp);
+
     }
 
     public boolean checkWin(int wbflag) {
@@ -272,6 +283,23 @@ public class GobangView extends View {
             switch (v.getId()) {
                 //如果是悔棋
                 case R.id.btn1:
+                    if (storageArray.size()==0) {
+                        Toast.makeText(getContext(),"开局并不能悔棋",Toast.LENGTH_SHORT).show();
+                    }else {
+                        if (storageArray.size()==1) {
+                            storageArray.pop();
+                            mGridArray = new int[GRID_SIZE - 1][GRID_SIZE - 1];
+                            invalidate();
+                        } else {
+                            String temp = storageArray.pop();
+                            String[] temps = temp.split(":");
+
+                            int a = Integer.parseInt(temps[0]);
+                            int b = Integer.parseInt(temps[1]);
+                            mGridArray[a][b] = 0;
+                            invalidate();
+                        }
+                    }
                     break;
                 //如果是刷新
                 case R.id.btn2:
