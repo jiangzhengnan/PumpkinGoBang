@@ -72,7 +72,6 @@ public class FindOthersAty extends Activity {
 
 
     private void initView() {
-
         //得到扫描周围蓝牙设备按钮
         btn_saomiao = (ImageButton) findViewById(R.id.saomiao_btn);
         //扫描周围设备的ListView
@@ -329,7 +328,7 @@ public class FindOthersAty extends Activity {
                 deviceshowAdapter.notifyDataSetChanged();
                 //添加新的设备到设备Arraylist
                 devices.add(bluetoothDevice);
-                // }
+
             }
         }
     }

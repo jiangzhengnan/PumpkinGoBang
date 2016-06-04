@@ -55,6 +55,7 @@ public class InitAty extends Activity {
 
     private class InitButtonListener implements View.OnClickListener{
         Intent i ;
+
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
@@ -70,6 +71,7 @@ public class InitAty extends Activity {
                                     i = new Intent(InitAty.this,RenjiGameAty.class);
                                     //设置从右边出现
                                     InitAty.this.overridePendingTransition(R.anim.initactivity_open, 0);
+                                    i.putExtra("flag",1);
                                     startActivity(i);
                                 }
                             });
@@ -79,6 +81,11 @@ public class InitAty extends Activity {
                                 @Override
                                 public void onClick(View v) {
 
+                                    i = new Intent(InitAty.this,RenjiGameAty.class);
+                                    //设置从右边出现
+                                    InitAty.this.overridePendingTransition(R.anim.initactivity_open, 0);
+                                    i.putExtra("flag",2);
+                                    startActivity(i);
                                 }
                             });
 
@@ -101,6 +108,10 @@ public class InitAty extends Activity {
 
                 break;
                 case R.id.init_rankbtn:
+                    i = new Intent(InitAty.this,RankAty.class);
+                    //设置从右边出现
+                    InitAty.this.overridePendingTransition(R.anim.initactivity_open, 0);
+                    startActivity(i);
 
                 break;
 

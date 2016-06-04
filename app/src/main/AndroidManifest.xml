@@ -12,7 +12,7 @@
         android:label="南瓜五子棋"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Light.NoTitleBar.Fullscreen">
-        <activity android:name=".aty.RenjiGameAty">
+        <activity android:name=".aty.RenjiGameAty" android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
 
         </activity>
         <activity android:name=".aty.FindOthersAty">
@@ -27,6 +27,7 @@
         </activity>
         <activity android:name=".aty.BlueToothGameAty"></activity>
         <activity android:name=".aty.RenRenGameAty"></activity>
+        <activity android:name=".aty.RankAty"></activity>
     </application>
 
 </manifest>

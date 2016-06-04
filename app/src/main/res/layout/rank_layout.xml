@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:background="@drawable/rankbackgoround"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <TextView
+        android:text="排   行   榜"
+        android:gravity="center"
+        android:textSize="35sp"
+        android:textStyle="bold"
+        android:textColor="@android:color/holo_red_dark"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"/>
+    <ListView
+
+        android:id="@+id/randlv"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:divider="#00000000"
+        android:dividerHeight="5dp"
+        android:layout_weight="1"></ListView>
+</LinearLayout>

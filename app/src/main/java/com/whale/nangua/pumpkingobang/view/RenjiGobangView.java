@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.whale.nangua.pumpkingobang.R;
+import com.whale.nangua.pumpkingobang.aty.RenjiGameAty;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -66,6 +67,7 @@ public class RenjiGobangView extends View {
 
     // 初始化黑白棋的Bitmap
     public void init() {
+        cunchusandianArraylist = new ArrayList<>();
         storageArray = new Stack<>();
         myButtonListener = new MyButtonListener();
         wbflag = BLACK; //初始为先下黑棋
@@ -104,6 +106,16 @@ public class RenjiGobangView extends View {
         mStartY = h / 2 - GRID_SIZE * GRID_WIDTH / 2;
     }
 
+    public void setWinListner(RenjiGameAty renjiGameAty) {
+        onWinListener = renjiGameAty;
+    }
+
+    OnWinListener onWinListener;
+
+    public interface OnWinListener{
+        void onWin(int i );
+    }
+
     /**
      * 点下出现棋子
      *
@@ -134,12 +146,18 @@ public class RenjiGobangView extends View {
                     putChess(x, y, BLACK);
 
                     //这个时候电脑自动下白棋
-                    naocanautomatic(x, y, WHITE);
+                    //根据难度选择对应的电脑智商
+                    if (nandu == 1) {
+                        naocanautomatic(x, y, WHITE);
+                    } else {
 
+                        normalautomatic(x, y, WHITE);
+                    }
                     //this.mGridArray[x][y] = 1;
                     if (checkWin(BLACK)) { //如果是黑棋赢了
                         mText = STRING_LOSE;
                         showTextView(mText);
+                        onWinListener.onWin(1);
                     } else if (checkFull()) {//如果棋盘满了
                         mText = STRING_EQUAL;
                         showTextView(mText);
@@ -147,14 +165,20 @@ public class RenjiGobangView extends View {
                     wbflag = BLACK;//然后下一步接着下黑棋
                 } else if (wbflag == WHITE) {
                     putChess(x, y, WHITE);
-
                     //这个时候电脑自动下黑棋
-                    naocanautomatic(x, y, BLACK);
+                    //根据难度选择对应的电脑智商
+                    if (nandu == 1) {
+                        naocanautomatic(x, y, BLACK);
+                    } else {
+
+                        normalautomatic(x, y, BLACK);
+                    }
 
                     //this.mGridArray[x][y] = 2;
                     if (checkWin(WHITE)) {
                         mText = STRING_WIN;
                         showTextView(mText);
+                        onWinListener.onWin(2);
                     } else if (checkFull()) {//如果棋盘满了
                         mText = STRING_EQUAL;
                         showTextView(mText);
@@ -170,25 +194,27 @@ public class RenjiGobangView extends View {
 
     }
 
+    /**
+     * 判断是否已经下过
+     *
+     * @param templist
+     */
     private void panduanshifouyijingxiaguo(ArrayList<int[]> templist) {
         for (int i = 0; i < storageHadChess.size(); i++) {
             //如有重复，则删掉
             for (int j = 0; j < templist.size(); j++) {
                 if (storageHadChess.get(i)[0] == templist.get(j)[0] && storageHadChess.get(i)[1] == templist.get(j)[1]) {
                     templist.remove(j);
-
                     //递归防止周围没有字落下时直接崩掉
-
                     if (templist.size() == 0) {
                         templist.add(new int[]{(int) (Math.random() * (GRID_SIZE - 2)), (int) (Math.random() * (GRID_SIZE - 2))});
-                        Log.d("whalea", " " + (int) (Math.random() * (GRID_SIZE - 2)));
+                        //  Log.d("whalea", " " + (int) (Math.random() * (GRID_SIZE - 2)));
                         panduanshifouyijingxiaguo(templist);
                     }
                 }
             }
         }
     }
-
 
     /**
      * 脑残模式自动下棋的电脑
@@ -210,13 +236,184 @@ public class RenjiGobangView extends View {
         //判断是否已经下过
         panduanshifouyijingxiaguo(templist);
 
-
         int num = (int) (Math.random() * templist.size());
         int a = templist.get(num)[0];
         int b = templist.get(num)[1];
         putChess(a, b, Color);
 
     }
+
+    ArrayList<String> cunchusandianArraylist;
+
+    /**
+     * 普通模式自动下棋的电脑
+     * 黑1白2
+     *
+     * @param x
+     * @param y
+     * @param Color
+     */
+    private void normalautomatic(int x, int y, int Color) {
+        int duishouColor = 0;//对手的颜色
+        //根据我方颜色推测出对手颜色
+        if (Color == 1) {
+            duishouColor = 2;
+        } else {
+            duishouColor = 1;
+        }
+        //判断我方是否有3个连成一线了
+        for (int i = 0; i < GRID_SIZE - 1; i++) //i表示列(根据宽度算出来的)
+            for (int j = 0; j < GRID_SIZE - 1; j++) { //i表示行(根据高度算出来的)
+                //检测横轴三个相连
+                if ((((i + 3) < (GRID_SIZE - 1)) &&
+                        (mGridArray[i][j] == Color) && (mGridArray[i + 1][j] == Color) && (mGridArray[i + 2][j] == Color)) ||
+                        (((i + 3) < (GRID_SIZE - 1)) &&
+                                (mGridArray[i][j] == duishouColor) && (mGridArray[i + 1][j] == duishouColor) && (mGridArray[i + 2][j] == duishouColor))) {
+                    //如果有三个点相连了
+                    //先判断是否已经测试过这三个点
+                    boolean aa = false;
+                    for (int p = 0; p < cunchusandianArraylist.size(); p++) {
+                        String sandiantemp = cunchusandianArraylist.get(p);
+                        String[] sandiantemps = sandiantemp.split(":");
+                        //如果这三个点已经存在
+                        if ((Integer.parseInt(sandiantemps[0]) == i) &&
+                                (Integer.parseInt(sandiantemps[1]) == j) &&
+                                (Integer.parseInt(sandiantemps[2]) == (i + 1)) &&
+                                (Integer.parseInt(sandiantemps[3]) == j) &&
+                                (Integer.parseInt(sandiantemps[4]) == (i + 2)) &&
+                                (Integer.parseInt(sandiantemps[5]) == j)) {
+                            aa = true;
+                        }
+                    }
+                    if (aa == true) {
+
+                    } else {
+                        //在两边端点位置随机下一个
+                        ifsangedianxianglian(i - 1, j, i + 3, j, Color);
+                        cunchusandianArraylist.add(i + ":" + j + ":" + (i + 1) + ":" + j + ":" + (i + 2) + ":" + j);
+                        return;
+                    }
+                }
+
+                //纵轴3个相连
+                if ((((j + 3) < (GRID_SIZE - 1)) &&
+                        (mGridArray[i][j] == Color) && (mGridArray[i][j + 1] == Color) && (mGridArray[i][j + 2] == Color)) ||
+                        (((j + 3) < (GRID_SIZE - 1)) &&
+                                (mGridArray[i][j] == duishouColor) && (mGridArray[i][j + 1] == duishouColor) && (mGridArray[i][j + 2] == duishouColor))) {
+                    //如果有三个点相连了
+                    //先判断是否已经测试过这三个点
+                    boolean aa = false;
+                    for (int p = 0; p < cunchusandianArraylist.size(); p++) {
+                        String sandiantemp = cunchusandianArraylist.get(p);
+                        String[] sandiantemps = sandiantemp.split(":");
+                        if ((Integer.parseInt(sandiantemps[0]) == i) &&
+                                (Integer.parseInt(sandiantemps[1]) == j) &&
+                                (Integer.parseInt(sandiantemps[2]) == i) &&
+                                (Integer.parseInt(sandiantemps[3]) == (j + 1)) &&
+                                (Integer.parseInt(sandiantemps[4]) == i) &&
+                                (Integer.parseInt(sandiantemps[5]) == (j + 2))) {
+                            aa = true;
+                        }
+                    }
+                    if (aa == true) {
+
+                    } else {
+                        //在两边端点位置随机下一个
+                        ifsangedianxianglian(i, j - 1, i, j + 3, Color);
+                        cunchusandianArraylist.add(i + ":" + j + ":" + i + ":" + (j + 1) + ":" + i + ":" + (j + 2));
+                        return;
+                    }
+                }
+
+                //左上到右下3个相连
+                if ((((j + 3) < (GRID_SIZE - 1)) && ((i + 3) < (GRID_SIZE - 1)) &&
+                        (mGridArray[i][j] == Color) && (mGridArray[i + 1][j + 1] == Color) && (mGridArray[i + 2][j + 2] == Color)) ||
+                        (((j + 3) < (GRID_SIZE - 1)) && ((i + 3) < (GRID_SIZE - 1)) &&
+                                (mGridArray[i][j] == duishouColor) && (mGridArray[i + 1][j + 1] == duishouColor) && (mGridArray[i + 2][j + 2] == duishouColor))) {
+                    //如果有三个点相连了
+                    //先判断是否已经测试过这三个点
+                    boolean aa = false;
+                    for (int p = 0; p < cunchusandianArraylist.size(); p++) {
+                        String sandiantemp = cunchusandianArraylist.get(p);
+                        String[] sandiantemps = sandiantemp.split(":");
+                        if ((Integer.parseInt(sandiantemps[0]) == i) &&
+                                (Integer.parseInt(sandiantemps[1]) == j) &&
+                                (Integer.parseInt(sandiantemps[2]) == (i + 1)) &&
+                                (Integer.parseInt(sandiantemps[3]) == (j + 1)) &&
+                                (Integer.parseInt(sandiantemps[4]) == (i + 2)) &&
+                                (Integer.parseInt(sandiantemps[5]) == (j + 2))) {
+                            aa = true;
+                        }
+                    }
+                    if (aa == true) {
+
+                    } else {
+                        ifsangedianxianglian(i - 1, j - 1, i + 3, j + 3, Color);
+                        cunchusandianArraylist.add(i + ":" + j + ":" + (i + 1) + ":" + (j + 1) + ":" + (i + 2) + ":" + (j + 2));
+                        return;
+                    }
+                }
+
+                //右上到左下3个相连
+                if ((((i - 3) >= 0) && ((j + 3) < (GRID_SIZE - 1)) &&
+                        (mGridArray[i][j] == Color) && (mGridArray[i - 1][j + 1] == Color) && (mGridArray[i - 2][j + 2] == Color)) ||
+                        (((i - 3) >= 0) && ((j + 3) < (GRID_SIZE - 1)) &&
+                                (mGridArray[i][j] == duishouColor) && (mGridArray[i - 1][j + 1] == duishouColor) && (mGridArray[i - 2][j + 2] == duishouColor))) {
+                    //如果有三个点相连了
+                    //先判断是否已经测试过这三个点
+                    boolean aa = false;
+                    for (int p = 0; p < cunchusandianArraylist.size(); p++) {
+                        String sandiantemp = cunchusandianArraylist.get(p);
+                        String[] sandiantemps = sandiantemp.split(":");
+                        if ((Integer.parseInt(sandiantemps[0]) == i) &&
+                                (Integer.parseInt(sandiantemps[1]) == j) &&
+                                (Integer.parseInt(sandiantemps[2]) == (i - 1)) &&
+                                (Integer.parseInt(sandiantemps[3]) == (j + 1)) &&
+                                (Integer.parseInt(sandiantemps[4]) == (i - 2)) &&
+                                (Integer.parseInt(sandiantemps[5]) == (j + 2))) {
+                            aa = true;
+                        }
+                    }
+                    if (aa == true) {
+
+                    } else {
+                        ifsangedianxianglian(i + 1, j - 1, i - 3, j + 3, Color);
+                        cunchusandianArraylist.add(i + ":" + j + ":" + (i - 1) + ":" + j + 1 + ":" + (i - 2) + ":" + (j + 2));
+                        return;
+                    }
+                }
+            }
+        int[][] temp = {{x - 1, y - 1}, {x, y - 1}, {x + 1, y - 1}, {x - 1, y}, {x + 1, y}, {x - 1, y + 1}, {x, y + 1}, {x + 1, y + 1}};
+        ArrayList<int[]> templist = new ArrayList<>();
+        for (int k = 0; k < temp.length; k++) {
+            if (temp[k][0] >= 0 && temp[k][0] < 13 && temp[k][1] >= 0 && temp[k][1] < 13) {
+                templist.add(temp[k]);
+            }
+            //判断是否已经下过
+            panduanshifouyijingxiaguo(templist);
+            int num = (int) (Math.random() * templist.size());
+            int a = templist.get(num)[0];
+            int b = templist.get(num)[1];
+            putChess(a, b, Color);
+            return;
+        }
+    }
+
+    /**
+     * 困难电脑の核心算法
+     * 判断有三个点相连之后的操作
+     */
+    private void ifsangedianxianglian(int x, int y, int m, int n, int Color) {
+        ArrayList<int[]> automaticChesslist = new ArrayList<>();
+        automaticChesslist.add(new int[]{x, y});
+        automaticChesslist.add(new int[]{m, n});
+        panduanshifouyijingxiaguo(automaticChesslist);
+        int randomindex = Math.round(automaticChesslist.size());
+        int a = automaticChesslist.get(randomindex - 1)[0];
+        int b = automaticChesslist.get(randomindex - 1)[1];
+        putChess(a, b, Color);
+    }
+
 
     @Override
     public void onDraw(Canvas canvas) {
@@ -272,6 +469,7 @@ public class RenjiGobangView extends View {
     //储存已经下了的棋
     private ArrayList<int[]> storageHadChess = new ArrayList<>();
 
+
     public void putChess(int x, int y, int blackwhite) {
         storageHadChess.add(new int[]{x, y});
         mGridArray[x][y] = blackwhite;
@@ -280,7 +478,14 @@ public class RenjiGobangView extends View {
 
     }
 
-    public boolean checkWin(int wbflag) {
+
+    /**
+     * 检测是否赢了
+     *
+     * @param wbflag
+     * @return
+     */
+    private boolean checkWin(int wbflag) {
         for (int i = 0; i < GRID_SIZE - 1; i++) //i表示列(根据宽度算出来的)
             for (int j = 0; j < GRID_SIZE - 1; j++) {//i表示行(根据高度算出来的)
                 //检测横轴五个相连
@@ -313,6 +518,7 @@ public class RenjiGobangView extends View {
             return false;
     }
 
+
     /**
      * 检查棋盘是否满了
      *
@@ -339,6 +545,18 @@ public class RenjiGobangView extends View {
     public void setShowTimeTextViewTime(int[] showtime) {
         this.showtime = showtime;
     }
+
+    /**
+     * 1简单难度
+     * 2困难难度
+     *
+     * @param i
+     */
+    public void setflag(int i) {
+        nandu = i;
+    }
+
+    private static int nandu = 1;//默认为简单难度
 
     class MyButtonListener implements OnClickListener {
         @Override
@@ -367,6 +585,10 @@ public class RenjiGobangView extends View {
                 //如果是刷新
                 case R.id.btn2:
                     setVisibility(View.VISIBLE);
+
+                    cunchusandianArraylist.clear();
+                    storageHadChess.clear();
+
                     mStatusTextView.invalidate();
                     init();
                     invalidate();
