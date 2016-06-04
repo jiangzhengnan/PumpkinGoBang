@@ -1,5 +1,6 @@
 package com.whale.nangua.pumpkingobang.aty;
 
+import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
@@ -12,28 +13,20 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.whale.nangua.pumpkingobang.Config;
 import com.whale.nangua.pumpkingobang.R;
 import com.whale.nangua.pumpkingobang.adapter.DeviceshowAdapter;
 import com.whale.nangua.pumpkingobang.bean.Device;
-import com.whale.nangua.pumpkingobang.utils.ClsUtils;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Set;
@@ -43,7 +36,7 @@ import java.util.Set;
  */
 public class FindOthersAty extends Activity {
     //初始化组件
-    private Button btn_saomiao;
+    private ImageButton btn_saomiao;
     private ListView saomiao_lv;
     //用户ListView显示的储存device名字与地址数组
     private ArrayList<Device> deviceNameAndDresss;
@@ -68,6 +61,7 @@ public class FindOthersAty extends Activity {
 
 
 
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.bluetooth_layout);
@@ -79,9 +73,8 @@ public class FindOthersAty extends Activity {
 
     private void initView() {
 
-
         //得到扫描周围蓝牙设备按钮
-        btn_saomiao = (Button) findViewById(R.id.saomiao_btn);
+        btn_saomiao = (ImageButton) findViewById(R.id.saomiao_btn);
         //扫描周围设备的ListView
         saomiao_lv = (ListView) findViewById(R.id.saomiao_lv);
         //设备信息ArrayList
@@ -276,8 +269,15 @@ public class FindOthersAty extends Activity {
 
     //扫描周围的蓝牙设备按钮监听器
     private class SaoMiaoButtonListener implements View.OnClickListener {
+
         @Override
         public void onClick(View v) {
+            ObjectAnimator animator = ObjectAnimator.ofFloat(v,"rotation",0,359);
+            animator.setRepeatCount(12);
+            animator.setDuration(1000);
+            animator.start();
+
+
             isQuering = true;
             Toast.makeText(FindOthersAty.this, "开始扫描", Toast.LENGTH_SHORT).show();
             //清空列表
@@ -286,7 +286,7 @@ public class FindOthersAty extends Activity {
             Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
             if (pairedDevices.size() > 0) {
                 for (BluetoothDevice device : pairedDevices) {
-                    deviceNameAndDresss.add(new Device(device.getName(), device.getAddress()));
+                    deviceNameAndDresss.add(new Device(device.getName(), device.getAddress(),device.getBondState()));
                     devices.add(device);
                 }
             }
@@ -294,6 +294,7 @@ public class FindOthersAty extends Activity {
             deviceshowAdapter.notifyDataSetChanged();
             //开始扫描周围的可见的蓝牙设备
             bluetoothAdapter.startDiscovery();
+
         }
     }
 
@@ -310,7 +311,6 @@ public class FindOthersAty extends Activity {
     }
 
     //接收广播
-
     /**
      * 接受广播，并显示尚未配对的可用的周围所有蓝牙设备
      */
@@ -325,7 +325,7 @@ public class FindOthersAty extends Activity {
                 // 如果该设备已经被配对，则跳过
                 //  if (bluetoothDevice.getBondState() != BluetoothDevice.BOND_BONDED) {
                 //设备数组获得新的设备信息并更新adapter
-                deviceNameAndDresss.add(new Device(bluetoothDevice.getName(), bluetoothDevice.getAddress()));
+                deviceNameAndDresss.add(new Device(bluetoothDevice.getName(), bluetoothDevice.getAddress(),bluetoothDevice.getBondState()));
                 deviceshowAdapter.notifyDataSetChanged();
                 //添加新的设备到设备Arraylist
                 devices.add(bluetoothDevice);

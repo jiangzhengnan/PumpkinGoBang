@@ -6,9 +6,21 @@ package com.whale.nangua.pumpkingobang.bean;
 public class Device {
     private String deviceName;
 
-    public Device(String deviceName, String deviceAddress) {
+
+    public int getBundlestate() {
+        return bundlestate;
+    }
+
+    public void setBundlestate(int bundlestate) {
+        this.bundlestate = bundlestate;
+    }
+
+    private int bundlestate;
+
+    public Device(String deviceName, String deviceAddress, int bundlestate) {
         this.deviceAddress = deviceAddress;
         this.deviceName = deviceName;
+        this.bundlestate = bundlestate;
     }
 
     public String getDeviceAddress() {

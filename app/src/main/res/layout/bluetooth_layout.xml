@@ -1,86 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:padding="10dp"
-              android:orientation="vertical">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             android:layout_width="match_parent"
+             android:background="@drawable/bluetoothchoice_background"
+             android:layout_height="match_parent">
 
-    　
-
-    <Button
-        android:id="@+id/saomiao_btn"
+    <com.whale.nangua.pumpkingobang.view.CircleDiffuse
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="扫描周围的蓝牙设备"/>　
-
-    <TextView
-        android:id="@+id/xianshikuang"
-        android:text="没有数据呢~"
-        android:layout_width="match_parent"
-        android:layout_height="100dp"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"></TextView>
-
+        android:layout_height="match_parent"/>
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="10dp">
+        <ImageButton
+            android:id="@+id/saomiao_btn"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/bluetoothsaomiaobtn"
+            android:text="扫描周围的蓝牙玩家"/>　
 
-        <EditText
-            android:id="@+id/shurukuang"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="3"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/fasongbtn"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="发送消息"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="玩家ID"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="玩家地址"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:text="配对情况"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/darker_gray"></TextView>
+
+        <ListView
+            android:id="@+id/saomiao_lv"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"></ListView>
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:text="玩家ID"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="50dp"/>
-        <TextView
-            android:text="玩家地址"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:layout_width="0dp"
-            android:layout_weight="3"
-            android:layout_height="50dp"/>
-        <TextView
-            android:text="配对情况"
-            android:gravity="center"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:layout_width="0dp"
-            android:layout_weight="2"
-            android:layout_height="50dp"/>
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"></TextView>
-
-    <ListView
-        android:id="@+id/saomiao_lv"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"></ListView>
-</LinearLayout>
+</FrameLayout>
