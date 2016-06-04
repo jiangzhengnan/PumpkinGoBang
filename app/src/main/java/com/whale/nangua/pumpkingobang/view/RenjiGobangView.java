@@ -106,6 +106,7 @@ public class RenjiGobangView extends View {
 
     /**
      * 点下出现棋子
+     *
      * @param event
      * @return
      */
@@ -125,11 +126,16 @@ public class RenjiGobangView extends View {
         } else {
             y = (int) ((event.getY() - mStartY) / GRID_WIDTH) - 1;
         }
+
         if ((x >= 0 && x < GRID_SIZE - 1)
                 && (y >= 0 && y < GRID_SIZE - 1)) {
             if (mGridArray[x][y] == 0) {
                 if (wbflag == BLACK) {
                     putChess(x, y, BLACK);
+
+                    //这个时候电脑自动下白棋
+                    naocanautomatic(x, y, WHITE);
+
                     //this.mGridArray[x][y] = 1;
                     if (checkWin(BLACK)) { //如果是黑棋赢了
                         mText = STRING_LOSE;
@@ -138,9 +144,13 @@ public class RenjiGobangView extends View {
                         mText = STRING_EQUAL;
                         showTextView(mText);
                     }
-                    wbflag = WHITE;
+                    wbflag = BLACK;//然后下一步接着下黑棋
                 } else if (wbflag == WHITE) {
                     putChess(x, y, WHITE);
+
+                    //这个时候电脑自动下黑棋
+                    naocanautomatic(x, y, BLACK);
+
                     //this.mGridArray[x][y] = 2;
                     if (checkWin(WHITE)) {
                         mText = STRING_WIN;
@@ -149,13 +159,62 @@ public class RenjiGobangView extends View {
                         mText = STRING_EQUAL;
                         showTextView(mText);
                     }
-                    wbflag = BLACK;
+
+                    wbflag = WHITE;//然后下一步接着下白棋
                 }
             }
         }
 
         this.invalidate();
         return true;
+
+    }
+
+    private void panduanshifouyijingxiaguo(ArrayList<int[]> templist) {
+        for (int i = 0; i < storageHadChess.size(); i++) {
+            //如有重复，则删掉
+            for (int j = 0; j < templist.size(); j++) {
+                if (storageHadChess.get(i)[0] == templist.get(j)[0] && storageHadChess.get(i)[1] == templist.get(j)[1]) {
+                    templist.remove(j);
+
+                    //递归防止周围没有字落下时直接崩掉
+
+                    if (templist.size() == 0) {
+                        templist.add(new int[]{(int) (Math.random() * (GRID_SIZE - 2)), (int) (Math.random() * (GRID_SIZE - 2))});
+                        Log.d("whalea", " " + (int) (Math.random() * (GRID_SIZE - 2)));
+                        panduanshifouyijingxiaguo(templist);
+                    }
+                }
+            }
+        }
+    }
+
+
+    /**
+     * 脑残模式自动下棋的电脑
+     *
+     * @param x
+     * @param y     玩家下的坐标
+     * @param Color 玩家下的棋的颜色    黑1白2
+     *              <p/>
+     *              x&y<GRID_SIZE - 1
+     */
+    private void naocanautomatic(int x, int y, int Color) {
+        int[][] temp = {{x - 1, y - 1}, {x, y - 1}, {x + 1, y - 1}, {x - 1, y}, {x + 1, y}, {x - 1, y + 1}, {x, y + 1}, {x + 1, y + 1}};
+        ArrayList<int[]> templist = new ArrayList<>();
+        for (int i = 0; i < temp.length; i++) {
+            if (temp[i][0] >= 0 && temp[i][0] < 13 && temp[i][1] >= 0 && temp[i][1] < 13) {
+                templist.add(temp[i]);
+            }
+        }
+        //判断是否已经下过
+        panduanshifouyijingxiaguo(templist);
+
+
+        int num = (int) (Math.random() * templist.size());
+        int a = templist.get(num)[0];
+        int b = templist.get(num)[1];
+        putChess(a, b, Color);
 
     }
 
@@ -210,7 +269,11 @@ public class RenjiGobangView extends View {
         }
     }
 
+    //储存已经下了的棋
+    private ArrayList<int[]> storageHadChess = new ArrayList<>();
+
     public void putChess(int x, int y, int blackwhite) {
+        storageHadChess.add(new int[]{x, y});
         mGridArray[x][y] = blackwhite;
         String temp = x + ":" + y;
         storageArray.push(temp);
@@ -283,10 +346,10 @@ public class RenjiGobangView extends View {
             switch (v.getId()) {
                 //如果是悔棋
                 case R.id.btn1:
-                    if (storageArray.size()==0) {
-                        Toast.makeText(getContext(),"开局并不能悔棋",Toast.LENGTH_SHORT).show();
-                    }else {
-                        if (storageArray.size()==1) {
+                    if (storageArray.size() == 0) {
+                        Toast.makeText(getContext(), "开局并不能悔棋", Toast.LENGTH_SHORT).show();
+                    } else {
+                        if (storageArray.size() == 1) {
                             storageArray.pop();
                             mGridArray = new int[GRID_SIZE - 1][GRID_SIZE - 1];
                             invalidate();
