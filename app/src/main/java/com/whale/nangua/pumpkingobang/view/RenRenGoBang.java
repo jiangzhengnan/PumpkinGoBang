@@ -279,7 +279,7 @@ public class RenRenGoBang extends View {
         public void onClick(View v) {
             switch (v.getId()) {
                 //如果是悔棋
-                case R.id.btn1:
+                case R.id.renren_btn1:
                     if (storageArray.size()==0) {
                         Toast.makeText(getContext(), "开局并不能悔棋", Toast.LENGTH_SHORT).show();
                     }else {
@@ -299,7 +299,7 @@ public class RenRenGoBang extends View {
                     }
                     break;
                 //如果是刷新
-                case R.id.btn2:
+                case R.id.renren_btn2:
                     setVisibility(View.VISIBLE);
                     mStatusTextView.invalidate();
                     init();

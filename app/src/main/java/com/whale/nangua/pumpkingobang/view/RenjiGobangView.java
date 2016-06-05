@@ -567,17 +567,25 @@ public class RenjiGobangView extends View {
                     if (storageArray.size() == 0) {
                         Toast.makeText(getContext(), "开局并不能悔棋", Toast.LENGTH_SHORT).show();
                     } else {
-                        if (storageArray.size() == 1) {
+                        if (storageArray.size() == 2) {
+                            storageArray.pop();
                             storageArray.pop();
                             mGridArray = new int[GRID_SIZE - 1][GRID_SIZE - 1];
                             invalidate();
                         } else {
-                            String temp = storageArray.pop();
-                            String[] temps = temp.split(":");
+                            String temp1 = storageArray.pop();
+                            String[] temps = temp1.split(":");
 
                             int a = Integer.parseInt(temps[0]);
                             int b = Integer.parseInt(temps[1]);
                             mGridArray[a][b] = 0;
+
+                            String temp2 = storageArray.pop();
+                            String[] temps2 = temp2.split(":");
+
+                            int c = Integer.parseInt(temps2[0]);
+                            int d = Integer.parseInt(temps2[1]);
+                            mGridArray[c][d] = 0;
                             invalidate();
                         }
                     }
