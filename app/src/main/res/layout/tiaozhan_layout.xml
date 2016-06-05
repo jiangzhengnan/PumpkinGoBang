@@ -2,16 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="300dp"
               android:orientation="vertical"
-              android:layout_height="180dp" >
+              android:layout_height="100dp" >
 
 
     <!-- Line 1 -->
 
     <TextView
-        android:text="难度选择"
+        android:text="收到挑战！"
         android:textSize="28sp"
         android:textStyle="bold"
         android:gravity="center"
+        android:textColor="@android:color/holo_red_light"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
@@ -24,33 +25,31 @@
 
 
 
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:padding="10dp"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
         android:layout_weight="2"
-        android:orientation="vertical">
+        android:orientation="horizontal">
         <Button
-            android:id="@+id/renjichoice_jiandan"
-            android:text="简单模式电脑"
-            android:textSize="25sp"
+            android:id="@+id/tiaozhan_submit"
+            android:text="接受"
+            android:textSize="15sp"
             android:layout_margin="5dp"
-            android:layout_width="match_parent"
-            android:background="@drawable/renji_button"
-            android:layout_height="0dp"
+            android:layout_width="0dp"
+            android:background="@drawable/win_button_backgournd"
+            android:layout_height="match_parent"
             android:layout_weight="1"/>
         <Button
-            android:id="@+id/renjichoice_kunnan"
-            android:text="普通模式电脑"
+            android:id="@+id/tiaozhan_cancle"
+            android:text="残忍拒绝"
             android:layout_margin="5dp"
-            android:textSize="25sp"
-            android:layout_width="match_parent"
-            android:background="@drawable/renji_button"
-            android:layout_height="0dp"
+            android:textSize="15sp"
+            android:layout_width="0dp"
+            android:background="@drawable/win_button_backgournd"
+            android:layout_height="match_parent"
             android:layout_weight="1"/>
-
     </LinearLayout>
-
 </LinearLayout>

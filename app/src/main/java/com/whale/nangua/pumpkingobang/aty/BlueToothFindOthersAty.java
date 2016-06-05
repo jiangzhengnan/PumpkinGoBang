@@ -16,7 +16,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -34,7 +33,7 @@ import java.util.Set;
 /**
  * Created by nangua on 2016/5/31.
  */
-public class FindOthersAty extends Activity {
+public class BlueToothFindOthersAty extends Activity {
     //初始化组件
     private ImageButton btn_saomiao;
     private ListView saomiao_lv;
@@ -108,18 +107,18 @@ public class FindOthersAty extends Activity {
                     while (true) {
                         bluetoothServerSocket = bluetoothAdapter.listenUsingInsecureRfcommWithServiceRecord(benjiname, Config.UUID);
                         fuwuSocket = bluetoothServerSocket.accept();
-
                         if (fuwuSocket.isConnected()) {
 
 
                             runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    Toast.makeText(FindOthersAty.this, "接收挑战请求，建立连接成功！", Toast.LENGTH_SHORT);
+                                    Toast.makeText(BlueToothFindOthersAty.this, "接收挑战请求，建立连接成功！", Toast.LENGTH_SHORT);
                                     //执行socket方法
 
-                                    BlueToothGameAty blueToothGameAty = new BlueToothGameAty();
-                                    blueToothGameAty.blueToothGameAty.manageConnectedSocket(fuwuSocket);
+                                     BlueToothGameAty blueToothGameAty = new BlueToothGameAty();
+                                    blueToothGameAty.blueToothGameAty.manageConnectedSocket(fuwuSocket, false);
+                             //       blueToothGameAty.blueToothGameAty.chushihua(blueToothGameAty);
                                 }
                             });
 
@@ -127,7 +126,7 @@ public class FindOthersAty extends Activity {
 
 
                             //跳转到蓝牙游戏activity
-                            Intent i = new Intent(FindOthersAty.this,BlueToothGameAty.class);
+                            Intent i = new Intent(BlueToothFindOthersAty.this,BlueToothGameAty.class);
                             startActivity(i);
                             //初始化线程来传输数据
                             // manageConnectedSocket(fuwuSocket);
@@ -169,6 +168,26 @@ public class FindOthersAty extends Activity {
             }
 
         });
+
+
+
+        //自动开始扫描
+        isQuering = true;
+        Toast.makeText(BlueToothFindOthersAty.this, "开始扫描", Toast.LENGTH_SHORT).show();
+        //清空列表
+        deviceNameAndDresss.clear();
+        //获得已配对的蓝牙设备
+        Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
+        if (pairedDevices.size() > 0) {
+            for (BluetoothDevice device : pairedDevices) {
+                deviceNameAndDresss.add(new Device(device.getName(), device.getAddress(),device.getBondState()));
+                devices.add(device);
+            }
+        }
+        deviceshowAdapter.setDevices(deviceNameAndDresss);
+        deviceshowAdapter.notifyDataSetChanged();
+        //开始扫描周围的可见的蓝牙设备
+        bluetoothAdapter.startDiscovery();
     }
 
     /**
@@ -197,7 +216,7 @@ public class FindOthersAty extends Activity {
             else if (device.getBondState() == BluetoothDevice.BOND_BONDED) {
                 //获得客户端Socket
                 kehuduanSocket = device.createRfcommSocketToServiceRecord(Config.UUID);
-                final AlertDialog aDialog = new AlertDialog.Builder(FindOthersAty.this).
+                final AlertDialog aDialog = new AlertDialog.Builder(BlueToothFindOthersAty.this).
                         setTitle("发起对战").
                         setMessage("确认挑战玩家：" + deviceNameAndDresss.get(position).getDeviceName() + "吗？")
                         .setNegativeButton("确定", new DialogInterface.OnClickListener() {
@@ -214,30 +233,27 @@ public class FindOthersAty extends Activity {
                                             if (!bluetoothAdapter.isEnabled()) {
                                                 bluetoothAdapter.enable();
                                             }
-
                                             if (kehuduanSocket.isConnected()) {
-
-
                                                 runOnUiThread(new Runnable() {
                                                     @Override
                                                     public void run() {
-                                                        Toast.makeText(FindOthersAty.this, "连接成功！！", Toast.LENGTH_SHORT).show();
+                                                        Toast.makeText(BlueToothFindOthersAty.this, "连接成功！！", Toast.LENGTH_SHORT).show();
                                                         //执行socket方法
-                                                        BlueToothGameAty blueToothGameAty = new BlueToothGameAty();
-                                                        blueToothGameAty.blueToothGameAty.manageConnectedSocket(kehuduanSocket);
+                                                         BlueToothGameAty blueToothGameAty = new BlueToothGameAty();
+
+                                                        blueToothGameAty.blueToothGameAty.manageConnectedSocket(kehuduanSocket, true);
+                                                     //   blueToothGameAty.blueToothGameAty.chushihua(blueToothGameAty);
                                                     }
                                                 });
-
-
                                                 //跳转到蓝牙游戏activity
-                                                Intent i = new Intent(FindOthersAty.this,BlueToothGameAty.class);
+                                                Intent i = new Intent(BlueToothFindOthersAty.this,BlueToothGameAty.class);
                                                 startActivity(i);
                                             }
                                         } catch (final IOException e) {
                                             runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
-                                                    Toast.makeText(FindOthersAty.this, "连接失败！！" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(BlueToothFindOthersAty.this, "连接失败！！" + e.getMessage(), Toast.LENGTH_SHORT).show();
 
                                                 }
                                             });
@@ -278,15 +294,17 @@ public class FindOthersAty extends Activity {
 
 
             isQuering = true;
-            Toast.makeText(FindOthersAty.this, "开始扫描", Toast.LENGTH_SHORT).show();
+            Toast.makeText(BlueToothFindOthersAty.this, "开始扫描", Toast.LENGTH_SHORT).show();
             //清空列表
             deviceNameAndDresss.clear();
             //获得已配对的蓝牙设备
             Set<BluetoothDevice> pairedDevices = bluetoothAdapter.getBondedDevices();
             if (pairedDevices.size() > 0) {
                 for (BluetoothDevice device : pairedDevices) {
-                    deviceNameAndDresss.add(new Device(device.getName(), device.getAddress(),device.getBondState()));
-                    devices.add(device);
+                    if (!devices.contains(device)) {
+                        deviceNameAndDresss.add(new Device(device.getName(), device.getAddress(),device.getBondState()));
+                        devices.add(device);
+                    }
                 }
             }
             deviceshowAdapter.setDevices(deviceNameAndDresss);
@@ -323,11 +341,13 @@ public class FindOthersAty extends Activity {
                 BluetoothDevice bluetoothDevice = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
                 // 如果该设备已经被配对，则跳过
                 //  if (bluetoothDevice.getBondState() != BluetoothDevice.BOND_BONDED) {
-                //设备数组获得新的设备信息并更新adapter
-                deviceNameAndDresss.add(new Device(bluetoothDevice.getName(), bluetoothDevice.getAddress(),bluetoothDevice.getBondState()));
-                deviceshowAdapter.notifyDataSetChanged();
-                //添加新的设备到设备Arraylist
-                devices.add(bluetoothDevice);
+                if (!devices.contains(bluetoothDevice)) {
+                    //设备数组获得新的设备信息并更新adapter
+                    deviceNameAndDresss.add(new Device(bluetoothDevice.getName(), bluetoothDevice.getAddress(),bluetoothDevice.getBondState()));
+                    //添加新的设备到设备Arraylist
+                    devices.add(bluetoothDevice);
+                    deviceshowAdapter.notifyDataSetChanged();
+                }
 
             }
         }
@@ -336,7 +356,7 @@ public class FindOthersAty extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        FindOthersAty.this.unregisterReceiver(bluetoothReceiver);
+        BlueToothFindOthersAty.this.unregisterReceiver(bluetoothReceiver);
     }
 
 

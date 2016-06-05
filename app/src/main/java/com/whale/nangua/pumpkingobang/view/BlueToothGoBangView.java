@@ -3,7 +3,10 @@ package com.whale.nangua.pumpkingobang.view;
 /**
  * Created by nangua on 2016/6/3.
  */
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,6 +25,7 @@ import android.widget.Toast;
 
 import com.whale.nangua.pumpkingobang.R;
 import com.whale.nangua.pumpkingobang.aty.BlueToothGameAty;
+import com.whale.nangua.pumpkingobang.aty.InitAty;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -238,7 +242,40 @@ public class BlueToothGoBangView extends View {
 
     //收到对方传来的棋子
     public void xiaqi(String command) {
-        if (command.equals("WHITE")) {
+        if ((command==null)) {
+            return;
+        }
+        if ((command.equals("HUIQI"))) {
+            if (storageArray.size()==0) {
+                Toast.makeText(getContext(),"开局并不能悔棋",Toast.LENGTH_SHORT).show();
+            }else {
+                if (storageArray.size()==1) {
+                    storageArray.pop();
+                    mGridArray = new int[GRID_SIZE - 1][GRID_SIZE - 1];
+                    invalidate();
+                } else {
+                    String temp = storageArray.pop();
+                    String[] temps = temp.split(":");
+
+                    int a = Integer.parseInt(temps[0]);
+                    int b = Integer.parseInt(temps[1]);
+                    mGridArray[a][b] = 0;
+                    invalidate();
+                }
+            }
+        } else if ((command.equals("REFRESH")))
+        {
+            setVisibility(View.VISIBLE);
+            mStatusTextView.invalidate();
+            init();
+            invalidate();
+            for (int i = 0; i < showtime.length; i++) {
+                showtime[i] = 0;
+            }
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+            mStatusTextView.setText("蓝牙对战模式 当前时间：" + simpleDateFormat.format(new Date()));
+        }
+        else if ((command.equals("WHITE"))) {
             mStatusTextView.setText("白棋赢辣");
         } else if (command.equals("BLACK")) {
             mStatusTextView.setText("黑棋赢辣");
@@ -264,6 +301,7 @@ public class BlueToothGoBangView extends View {
 
     public interface BlueToothActionListner {
         void  onPutChess(String temp);
+        void onBtnPress(int i); //0悔棋  1刷新
     }
 
     public boolean checkWin(int wbflag) {
@@ -331,7 +369,8 @@ public class BlueToothGoBangView extends View {
         public void onClick(View v) {
             switch (v.getId()) {
                 //如果是悔棋
-                case R.id.btn1:
+                case R.id.bluetooth_btn1:
+                    blueToothGameAty.onBtnPress(0);
                     if (storageArray.size()==0) {
                         Toast.makeText(getContext(),"开局并不能悔棋",Toast.LENGTH_SHORT).show();
                     }else {
@@ -351,7 +390,8 @@ public class BlueToothGoBangView extends View {
                     }
                     break;
                 //如果是刷新
-                case R.id.btn2:
+                case R.id.bluetooth_btn2:
+                    blueToothGameAty.onBtnPress(1);
                     setVisibility(View.VISIBLE);
                     mStatusTextView.invalidate();
                     init();

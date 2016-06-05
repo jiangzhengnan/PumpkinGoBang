@@ -2,12 +2,17 @@ package com.whale.nangua.pumpkingobang.aty;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.whale.nangua.pumpkingobang.R;
 import com.whale.nangua.pumpkingobang.view.BlueToothGoBangView;
@@ -24,14 +29,16 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
-
-public class BlueToothGameAty extends Activity implements BlueToothGoBangView.BlueToothActionListner{
+/**
+ * 蓝牙对战Activity
+ */
+public class BlueToothGameAty extends Activity implements BlueToothGoBangView.BlueToothActionListner {
     public BlueToothGameAty blueToothGameAty =  this;
-    private static  BlueToothGoBangView gbv;
-    private  TextView textView;
-    private  Button huiqi;
-    private  Button shuaxin;
-    private  TextView showtime;
+    private static BlueToothGoBangView gbv;
+    private TextView textView;
+    private Button huiqi;
+    private Button shuaxin;
+    private TextView showtime;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,11 +63,10 @@ public class BlueToothGameAty extends Activity implements BlueToothGoBangView.Bl
         gbv.setActionCallbak(this);
         Timer timer = new Timer();
         JishiTask myTask = new JishiTask();
-        timer.schedule(myTask, 1000,1000);
+        timer.schedule(myTask, 1000, 1000);
     }
 
-    int[] jishitime = {0,0,0,0};//秒，分，时，总
-
+    int[] jishitime = {0, 0, 0, 0};//秒，分，时，总
 
 
     private class JishiTask extends TimerTask {
@@ -80,37 +86,87 @@ public class BlueToothGameAty extends Activity implements BlueToothGoBangView.Bl
                         jishitime[1] = 0;
                     }
                     if (jishitime[2] == 24) {
-                        jishitime[2]=0;
+                        jishitime[2] = 0;
                     }
-                    showtime.setText(String.format("%02d:%02d:%02d",jishitime[2],jishitime[1],jishitime[0]));
+                    showtime.setText(String.format("%02d:%02d:%02d", jishitime[2], jishitime[1], jishitime[0]));
                 }
             });
         }
     }
 
+    Context context = BlueToothGameAty.this;
 
     //数据传输线程
     static ConnectedThread connectedThread;
 
     //初始化线程来传输或接收数据
-    public void manageConnectedSocket(BluetoothSocket socket) {
+
+    /**
+     * 连接蓝牙socket方法
+     *
+     * @param socket
+     * @param faqi   是否为发起方
+     */
+    public void manageConnectedSocket(final BluetoothSocket socket, final Boolean faqi) {
         //在一个线程中执行数据传输
         connectedThread = new ConnectedThread(socket);
         connectedThread.start();
-        //connectedThread.start();
- /*       fasongbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String temp = "数据！";
-                connectedThread.write(temp.getBytes());
-            }
-        });*/
+        if (faqi == true) {
+            String temp = "TIAOZHAN";
+            connectedThread.write(temp.getBytes());
+        }
     }
 
     @Override
     public void onPutChess(String temp) {
         Log.d("whalea", "发送给对方我下的棋" + temp);
         connectedThread.write(temp.getBytes());
+    }
+
+    @Override
+    public void onBtnPress(int i) {
+        String command;
+        if (i == 0) {
+            //如果是悔棋
+            command = "HUIQI";
+            connectedThread.write(command.getBytes());
+        } else {
+            //如果是重玩
+            command = "REFRESH";
+            connectedThread.write(command.getBytes());
+
+        }
+    }
+
+    public void chushihua(BlueToothGameAty blueToothGameAty) {
+        mydialog = new AlertDialog.Builder(this);
+    }
+
+    private AlertDialog.Builder mydialog;
+
+    public void showdialog() {
+        //收到挑战
+        mydialog.setMessage("Are you sure you want to exit?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        Intent i = new Intent(BlueToothGameAty.this, InitAty.class);
+                        //设置从右边出现
+                        BlueToothGameAty.this.overridePendingTransition(R.anim.initactivity_open, 0);
+                        startActivity(i);
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = mydialog.create();
+        alert.show();
+
+
     }
 
     /**
@@ -141,7 +197,19 @@ public class BlueToothGameAty extends Activity implements BlueToothGoBangView.Bl
         }
 
         public void run() {
-            while(true) {
+            while (true) {
+                if (!mmSocket.isConnected()) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent i = new Intent(BlueToothGameAty.this, InitAty.class);
+                            //设置从右边出现
+                            BlueToothGameAty.this.overridePendingTransition(R.anim.initactivity_open, 0);
+                            startActivity(i);
+                        }
+                    });
+                }
+
                 //得到输入输出流
                 DataInputStream datains = new DataInputStream(mmInStream);
                 String command = null;
@@ -151,12 +219,17 @@ public class BlueToothGameAty extends Activity implements BlueToothGoBangView.Bl
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                Log.d("whalea",command);
-                  final String finalCommand = command;
+                final String finalCommand = command;
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        gbv.xiaqi(finalCommand);
+                        if ((finalCommand != null) && (finalCommand.equals("TIAOZHAN"))) {
+                            Toast.makeText(BlueToothGameAty.this, "收到挑战！", Toast.LENGTH_LONG).show();
+                            showdialog();
+                            Log.d("whalea", "收到挑战辣");
+                        } else {
+                            gbv.xiaqi(finalCommand);
+                        }
                     }
                 });
             }
@@ -168,9 +241,9 @@ public class BlueToothGameAty extends Activity implements BlueToothGoBangView.Bl
                 OutputStream out = mmSocket.getOutputStream();
                 DataOutputStream dataout = new DataOutputStream(out);
                 //发送给服务器需要下载的文件和断点
-                String temp = new String(bytes,"utf-8");
+                String temp = new String(bytes, "utf-8");
                 dataout.writeUTF(temp);
-                Log.d("whalea", "temp");
+                Log.d("whalea", temp);
             } catch (IOException e) {
                 Log.d("whalea", "写不出的原因:" + e.getMessage());
             }
