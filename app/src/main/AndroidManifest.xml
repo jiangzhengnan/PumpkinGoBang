@@ -29,7 +29,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".aty.BlueToothGameAty"></activity>
+        <activity android:name=".aty.BlueToothGameAty"   android:theme="@style/Theme.AppCompat.Light.NoActionBar" ></activity>
         <activity android:name=".aty.RenRenGameAty"></activity>
         <activity android:name=".aty.RankAty"></activity>
         <activity android:name=".aty.WifiFindOtherAty"></activity>

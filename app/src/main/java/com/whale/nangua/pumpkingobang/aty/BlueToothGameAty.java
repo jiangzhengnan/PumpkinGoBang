@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -64,6 +65,10 @@ public class BlueToothGameAty extends Activity implements BlueToothGoBangView.Bl
         Timer timer = new Timer();
         JishiTask myTask = new JishiTask();
         timer.schedule(myTask, 1000, 1000);
+
+        if (faqi == false) {
+            showdialog();
+        }
     }
 
     int[] jishitime = {0, 0, 0, 0};//秒，分，时，总
@@ -101,6 +106,8 @@ public class BlueToothGameAty extends Activity implements BlueToothGoBangView.Bl
 
     //初始化线程来传输或接收数据
 
+    public static boolean faqi = false;
+
     /**
      * 连接蓝牙socket方法
      *
@@ -108,6 +115,7 @@ public class BlueToothGameAty extends Activity implements BlueToothGoBangView.Bl
      * @param faqi   是否为发起方
      */
     public void manageConnectedSocket(final BluetoothSocket socket, final Boolean faqi) {
+        this.faqi = faqi;
         //在一个线程中执行数据传输
         connectedThread = new ConnectedThread(socket);
         connectedThread.start();
@@ -139,22 +147,24 @@ public class BlueToothGameAty extends Activity implements BlueToothGoBangView.Bl
     }
 
     public void chushihua(BlueToothGameAty blueToothGameAty) {
-        mydialog = new AlertDialog.Builder(this);
     }
 
     private AlertDialog.Builder mydialog;
 
     public void showdialog() {
         //收到挑战
-        mydialog.setMessage("Are you sure you want to exit?")
+        mydialog = new AlertDialog.Builder(BlueToothGameAty.this);
+        mydialog.setMessage("收到新的挑战，是否接受？")
                 .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setPositiveButton("yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();
                     }
                 })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                .setNegativeButton("no", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+                        String wold = "JUJVE";
+                        connectedThread.write(wold.getBytes());
 
                         Intent i = new Intent(BlueToothGameAty.this, InitAty.class);
                         //设置从右边出现
@@ -224,9 +234,21 @@ public class BlueToothGameAty extends Activity implements BlueToothGoBangView.Bl
                     @Override
                     public void run() {
                         if ((finalCommand != null) && (finalCommand.equals("TIAOZHAN"))) {
-                            Toast.makeText(BlueToothGameAty.this, "收到挑战！", Toast.LENGTH_LONG).show();
-                            showdialog();
+                          //  showdialog();
+                            Message message = new Message();
+                            message.what = 1;
+                            mhandler.sendMessageDelayed(message,2000);
                             Log.d("whalea", "收到挑战辣");
+                        } else if (finalCommand.equals("JUJVE")) {
+                            try {
+                                mmSocket.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            Intent i = new Intent(BlueToothGameAty.this, InitAty.class);
+                            //设置从右边出现
+                            BlueToothGameAty.this.overridePendingTransition(R.anim.initactivity_open, 0);
+                            startActivity(i);
                         } else {
                             gbv.xiaqi(finalCommand);
                         }
@@ -255,5 +277,14 @@ public class BlueToothGameAty extends Activity implements BlueToothGoBangView.Bl
             } catch (IOException e) { }
         }*/
     }
+
+
+    public Handler mhandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            //Toast.makeText(BlueToothGameAty.this, "收到挑战！", Toast.LENGTH_LONG).show();
+        }
+    };
 }
 
